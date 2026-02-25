@@ -281,14 +281,18 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .ayah-badge {
+    .btn-play-ayah-top {
       position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
       background: linear-gradient(135deg, #1a1608, #0d1017);
       border: 1px solid var(--gold-dim); border-top: none; color: var(--gold);
       font-family: 'Cinzel', serif; font-size: clamp(0.58rem, 2.5vw, 0.68rem); font-weight: 500;
       padding: 6px 18px 5px; border-radius: 0 0 var(--radius) var(--radius);
       letter-spacing: 0.12em; white-space: nowrap; direction: ltr; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s; z-index: 1;
     }
+    .btn-play-ayah-top:hover { color: var(--gold-bright); border-color: var(--gold); box-shadow: 0 4px 20px rgba(200,168,75,0.2); }
+    .btn-play-ayah-top.playing-ayah { color: var(--green); border-color: var(--green); box-shadow: 0 4px 16px rgba(90,184,150,0.2); }
+    .btn-play-ayah-top svg { width: 11px; height: 11px; fill: currentColor; flex-shrink: 0; }
 
     /* ── Words ── */
     .ayah-words {
@@ -370,32 +374,7 @@
       direction: ltr; text-align: left; padding: 0 4px;
     }
 
-    .ayah-footer { display: flex; justify-content: center; margin-top: 20px; direction: ltr; }
 
-    .btn-play-ayah {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 12px 28px; min-height: 44px; border-radius: 99px;
-      border: 1px solid var(--gold-dim);
-      background: linear-gradient(135deg, rgba(200,168,75,0.08), rgba(200,168,75,0.03));
-      color: var(--gold); font-family: 'Cinzel', serif;
-      font-size: clamp(0.68rem, 3vw, 0.75rem); font-weight: 500;
-      cursor: pointer; transition: all 0.25s; letter-spacing: 0.15em; text-transform: uppercase;
-    }
-
-    .btn-play-ayah:hover {
-      background: linear-gradient(135deg, rgba(200,168,75,0.18), rgba(200,168,75,0.08));
-      border-color: var(--gold); box-shadow: 0 0 24px rgba(200,168,75,0.2), 0 4px 16px rgba(0,0,0,0.4);
-      color: var(--gold-bright); transform: translateY(-1px);
-    }
-
-    .btn-play-ayah:active { transform: scale(0.97); }
-
-    .btn-play-ayah.playing-ayah {
-      background: linear-gradient(135deg, var(--green-glow), rgba(90,184,150,0.06));
-      border-color: var(--green); color: var(--green); box-shadow: 0 0 20px rgba(90,184,150,0.15);
-    }
-
-    .btn-play-ayah svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
 
     /* ══════════════════ SELECTION BAR ══════════════════ */
     #selection-bar {
@@ -413,13 +392,26 @@
 
     #selection-bar.visible { transform: translateY(0); }
 
-    .sel-bar-info {
-      flex: 1; font-family: 'Cinzel', serif; font-size: clamp(0.65rem, 3vw, 0.75rem);
-      color: var(--blue); letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    /* Repeat group in selection bar */
+    .sel-repeat-group {
+      display: flex; align-items: center; gap: 6px; flex-shrink: 0;
     }
-
-    .sel-bar-info span {
-      display: block; font-size: 0.65em; color: var(--text-muted); margin-top: 2px; letter-spacing: 0.04em;
+    .sel-repeat-label {
+      font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--blue);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .sel-repeat-btn {
+      width: 32px; height: 32px; border-radius: var(--radius-sm);
+      border: 1px solid var(--blue-border); background: rgba(90,158,240,0.08);
+      color: var(--blue); font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; padding: 0; flex-shrink: 0;
+    }
+    .sel-repeat-btn:hover { background: rgba(90,158,240,0.18); }
+    .sel-repeat-btn:active { transform: scale(0.88); }
+    .sel-repeat-val {
+      font-size: 0.85rem; color: var(--blue); min-width: 28px;
+      text-align: center; font-family: 'Crimson Pro', serif; font-variant-numeric: tabular-nums;
     }
 
     .sel-bar-btn {
@@ -490,8 +482,8 @@
       .controls-panel { padding: 10px 12px 8px; gap: 8px; }
       #main { padding: 18px 10px 120px; }
       .ayah-card { padding: 38px 14px 20px; border-radius: 16px; margin-bottom: 16px; }
-      .ayah-words { gap: 6px 0; }
-      .word { padding: 4px 5px 2px; }
+      .ayah-words { gap: 0; flex-direction: column; align-items: center; }
+      .word { padding: 6px 10px; width: 100%; justify-content: center; text-align: center; border-radius: 8px; }
       .settings-toggle { display: flex; }
 
       .scale-row {
@@ -564,8 +556,11 @@
 </div>
 
 <div id="selection-bar">
-  <div class="sel-bar-info" id="sel-bar-info">
-    0 words selected<span id="sel-bar-sub"></span>
+  <div class="sel-repeat-group">
+    <span class="sel-repeat-label">Repeat</span>
+    <button class="sel-repeat-btn" id="repeat-minus" type="button">−</button>
+    <span class="sel-repeat-val" id="repeat-val">1</span>
+    <button class="sel-repeat-btn" id="repeat-plus" type="button">＋</button>
   </div>
   <button class="sel-bar-btn btn-play-sel" id="btn-play-sel" type="button">
     <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play
@@ -625,6 +620,10 @@ var RECITER = 'Alafasy_128kbps';
   var selEnd     = -1;
   var allWordEls = [];
   var allWordTs  = [];
+
+  /* ─── Repeat ─── */
+  var repeatCount = 1;
+  var repeatsDone = 0;
 
   /* ─── Long-press ─── */
   var lpTimer     = null;
@@ -845,10 +844,12 @@ var RECITER = 'Alafasy_128kbps';
     card.dataset.ayahKey = ayahKey;
     if (showTranslit) card.classList.add('show-translit');
 
-    var badge = document.createElement('div');
-    badge.className = 'ayah-badge';
-    badge.textContent = 'Surah ' + surah + '  ·  Ayah ' + ayah;
-    card.appendChild(badge);
+    var topBtn = document.createElement('button');
+    topBtn.className = 'btn-play-ayah-top';
+    topBtn.type = 'button';
+    topBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play Ayah';
+    topBtn.addEventListener('click', function () { playFullAyah(ayahKey, surah, ayah, topBtn); });
+    card.appendChild(topBtn);
 
     var wordsDiv = document.createElement('div');
     wordsDiv.className = 'ayah-words';
@@ -902,14 +903,7 @@ var RECITER = 'Alafasy_128kbps';
     transDiv.textContent = trans || '(Translation unavailable)';
     card.appendChild(transDiv);
 
-    var footer = document.createElement('div');
-    footer.className = 'ayah-footer';
-    var playBtn = document.createElement('button');
-    playBtn.className = 'btn-play-ayah';
-    playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play Ayah';
-    playBtn.addEventListener('click', function () { playFullAyah(ayahKey, surah, ayah, playBtn); });
-    footer.appendChild(playBtn);
-    card.appendChild(footer);
+
     cont.appendChild(card);
   }
 
@@ -1058,12 +1052,6 @@ var RECITER = 'Alafasy_128kbps';
   }
 
   function updateBar() {
-    var lo = Math.min(selStart, selEnd), hi = Math.max(selStart, selEnd);
-    var n = hi - lo + 1;
-    document.getElementById('sel-bar-info').childNodes[0].textContent =
-      n + (n === 1 ? ' word selected' : ' words selected');
-    document.getElementById('sel-bar-sub').textContent =
-      'Word ' + (lo+1) + ' – ' + (hi+1) + '  ·  Long-press to adjust';
     document.getElementById('selection-bar').classList.add('visible');
   }
 
@@ -1187,11 +1175,31 @@ var RECITER = 'Alafasy_128kbps';
       setNowPlaying('▶  Playing ' + n + (n === 1 ? ' word' : ' words'));
       pBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>Playing';
 
+      repeatsDone++;
+      var totalReps = repeatCount === 20 ? Infinity : repeatCount;
+
       segmentSource.onended = function () {
-        clearHl(); setNowPlaying('');
-        pBtn.classList.remove('playing-sel');
-        pBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play';
-        segmentSource = null;
+        clearHl();
+        if (repeatsDone < totalReps && selMode) {
+          /* Play again */
+          var ctx2 = getAudioCtx();
+          segmentSource = ctx2.createBufferSource();
+          segmentSource.buffer = buffer;
+          segmentSource.connect(ctx2.destination);
+          segmentSource.start(0, startMs / 1000, duration);
+          scheduleHighlights(allWordEls, ts, lo, hi, startMs);
+          repeatsDone++;
+          var repLabel = repeatCount === 20 ? '∞' : (repeatsDone + '/' + repeatCount);
+          setNowPlaying('▶  ' + n + (n === 1 ? ' word' : ' words') + '  ·  ' + repLabel);
+          /* Re-bind onended recursively */
+          segmentSource.onended = arguments.callee;
+        } else {
+          setNowPlaying('');
+          repeatsDone = 0;
+          pBtn.classList.remove('playing-sel');
+          pBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play';
+          segmentSource = null;
+        }
       };
     });
   }
@@ -1231,6 +1239,7 @@ var RECITER = 'Alafasy_128kbps';
 
   function stopSegment() {
     clearHl();
+    repeatsDone = 0;
     if (segmentSource) { try { segmentSource.stop(); } catch(e){} segmentSource = null; }
     var pBtn = document.getElementById('btn-play-sel');
     if (pBtn) { pBtn.classList.remove('playing-sel'); pBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play'; }
@@ -1246,6 +1255,11 @@ var RECITER = 'Alafasy_128kbps';
   function resetAyahBtn(btn) {
     btn.classList.remove('playing-ayah');
     btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play Ayah';
+  }
+
+  function setRepeatVal(v) {
+    repeatCount = Math.min(20, Math.max(1, v));
+    document.getElementById('repeat-val').textContent = repeatCount === 20 ? '∞' : repeatCount;
   }
 
   function setNowPlaying(txt) { document.getElementById('now-playing').textContent = txt; }
@@ -1325,6 +1339,9 @@ var RECITER = 'Alafasy_128kbps';
     document.getElementById('translit-minus').addEventListener('click', function () { setTranslitSize(translitSize-0.05); });
     document.getElementById('trans-plus').addEventListener('click',     function () { setTransSize(transSize+0.1); });
     document.getElementById('trans-minus').addEventListener('click',    function () { setTransSize(transSize-0.1); });
+
+    document.getElementById('repeat-minus').addEventListener('click', function () { setRepeatVal(repeatCount - 1); });
+    document.getElementById('repeat-plus').addEventListener('click',  function () { setRepeatVal(repeatCount + 1); });
 
     document.getElementById('btn-play-sel').addEventListener('click', function () {
       if (this.classList.contains('playing-sel')) stopSegment();
