@@ -487,11 +487,11 @@
       .settings-toggle { display: flex; }
 
       .scale-row {
-        display: none; grid-template-columns: 1fr 1fr; justify-items: center;
+        display: none; grid-template-columns: 1fr; justify-items: center;
         gap: 10px; padding: 12px 0 6px; border-top: 1px solid rgba(200,168,75,0.08);
       }
       .scale-row.visible { display: grid; }
-      .scale-group:last-child { grid-column: 1/-1; justify-content: center; }
+      .scale-group:last-child { grid-column: 1; justify-content: center; }
       .scale-label { min-width: 56px; font-size: 0.58rem; }
       .scale-btn { width: 44px; height: 44px; font-size: 1.4rem; border-radius: 10px; }
       .scale-value { font-size: 0.85rem; min-width: 42px; }
