@@ -896,7 +896,12 @@ var RECITER = 'Alafasy_128kbps';
 
     var trans = '';
     if (verse.translations && verse.translations.length > 0)
-      trans = verse.translations[0].text.replace(/<[^>]+>/g,'').replace(/\s*\[[\d,\s]+\]/g,'').replace(/\s*\([\d]+\)/g,'').replace(/\d+\uFE0F?\u20E3/g,'').trim();
+      trans = verse.translations[0].text
+  .replace(/<[^>]+>/g, '')
+  .replace(/\[[\d,\s]+\]/g, '')
+  .replace(/\([\d]+\)/g, '')
+  .replace(/\p{N}+/gu, '')   // removes ALL unicode numbers
+  .trim();
     var transDiv = document.createElement('div');
     transDiv.className = 'ayah-translation';
     transDiv.textContent = trans || '(Translation unavailable)';
