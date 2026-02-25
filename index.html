@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║           QURAN · WORD BY WORD  —  FINAL VERSION                ║
+  ║           QURAN · WORD BY WORD  —  FINAL VERSION                 ║
   ║                                                                  ║
   ║  SETUP (do this once before deploying to Netlify):               ║
   ║                                                                  ║
   ║  1. Download timestamp file:                                     ║
   ║     github.com/cpfair/quran-align                                ║
-  ║     → Releases → release-2016-11-24                             ║
+  ║     → Releases → release-2016-11-24                              ║
   ║     → download Alafasy_128kbps.json                              ║
   ║     → rename it to:  timestamps.json                             ║
   ║                                                                  ║
@@ -1177,10 +1177,9 @@ var RECITER = 'Alafasy_128kbps';
       repeatsDone++;
       var totalReps = repeatCount === 20 ? Infinity : repeatCount;
 
-      segmentSource.onended = function () {
+      function onRepeatEnded() {
         clearHl();
         if (repeatsDone < totalReps && selMode) {
-          /* Play again */
           var ctx2 = getAudioCtx();
           segmentSource = ctx2.createBufferSource();
           segmentSource.buffer = buffer;
@@ -1190,8 +1189,7 @@ var RECITER = 'Alafasy_128kbps';
           repeatsDone++;
           var repLabel = repeatCount === 20 ? '∞' : (repeatsDone + '/' + repeatCount);
           setNowPlaying('▶  ' + n + (n === 1 ? ' word' : ' words') + '  ·  ' + repLabel);
-          /* Re-bind onended recursively */
-          segmentSource.onended = arguments.callee;
+          segmentSource.onended = onRepeatEnded;
         } else {
           setNowPlaying('');
           repeatsDone = 0;
@@ -1199,7 +1197,9 @@ var RECITER = 'Alafasy_128kbps';
           pBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play';
           segmentSource = null;
         }
-      };
+      }
+
+      segmentSource.onended = onRepeatEnded;
     });
   }
 
